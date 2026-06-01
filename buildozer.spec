@@ -13,7 +13,7 @@ source.dir = .
 version = 1.0.0
 
 # ── 入口文件 ──
-main.py = 配音工具_kivy.py
+main.py = main.py
 
 # ── 包含文件类型 ──
 source.include_exts = py,png,jpg,jpeg,kv,atlas,wav,mp3,ttf,otf

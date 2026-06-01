@@ -3,36 +3,49 @@ name: 打包 Android APK
 on:
   push:
     branches: [main, master]
-  workflow_dispatch:  # 允许手动触发
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-22.04
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 安装系统依赖
+      - name: 系统依赖
         run: |
           sudo apt update -qq
           sudo apt install -y -qq openjdk-17-jdk autoconf cmake build-essential \
-            libffi-dev libssl-dev python3-pip git unzip zip libltdl-dev \
-            libncurses5-dev libgles2-mesa-dev > /dev/null 2>&1
+            libffi-dev libssl-dev python3-pip python3-dev git unzip zip libltdl-dev \
+            libncurses5-dev libgles2-mesa-dev libsdl2-dev libsdl2-image-dev \
+            libsdl2-mixer-dev libsdl2-ttf-dev gperf gettext
 
-      - name: 安装 Buildozer
-        run: pip install buildozer cython --quiet
-
-      - name: 验证配置
+      - name: Python 依赖
         run: |
-          echo "=== buildozer.spec ==="
-          grep -E "package.name|requirements|android.permissions|android.arch" buildozer.spec
-          echo "=== 主程序 ==="
-          wc -l 配音工具_kivy.py
+          pip install --upgrade pip setuptools wheel
+          pip install buildozer cython jinja2 sh virtualenv
+          buildozer version
+
+      - name: 准备主程序
+        run: |
+          cp 配音工具_kivy.py main.py
+          echo "=== main.py 行数 ===" && wc -l main.py
 
       - name: 打包 APK
-        run: buildozer android debug
+        run: |
+          buildozer android debug 2>&1 | tee build.log
+        timeout-minutes: 60
+
+      - name: 上传构建日志(失败时)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
 
       - name: 上传 APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: 配音工具-APK
