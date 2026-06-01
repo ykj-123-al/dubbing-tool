@@ -1,0 +1,18 @@
+# Build artifacts
+.buildozer/
+bin/
+*.apk
+*.aab
+
+# Python cache
+__pycache__/
+*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# Temp files
+*.log
+cache/
+voice_library/

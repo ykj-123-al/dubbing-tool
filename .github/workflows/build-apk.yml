@@ -1,0 +1,40 @@
+name: 打包 Android APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装系统依赖
+        run: |
+          sudo apt update -qq
+          sudo apt install -y -qq openjdk-17-jdk autoconf cmake build-essential \
+            libffi-dev libssl-dev python3-pip git unzip zip libltdl-dev \
+            libncurses5-dev libgles2-mesa-dev > /dev/null 2>&1
+
+      - name: 安装 Buildozer
+        run: pip install buildozer cython --quiet
+
+      - name: 验证配置
+        run: |
+          echo "=== buildozer.spec ==="
+          grep -E "package.name|requirements|android.permissions|android.arch" buildozer.spec
+          echo "=== 主程序 ==="
+          wc -l 配音工具_kivy.py
+
+      - name: 打包 APK
+        run: buildozer android debug
+
+      - name: 上传 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 配音工具-APK
+          path: bin/*.apk
+          retention-days: 30
