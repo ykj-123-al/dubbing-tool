@@ -34,6 +34,7 @@ jobs:
 
       - name: 打包 APK
         run: |
+          set -o pipefail
           buildozer android debug 2>&1 | tee build.log
         timeout-minutes: 60
 

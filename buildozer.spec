@@ -47,10 +47,10 @@ android.minapi = 26
 android.ndk = 25b
 
 # SDK 版本
-android.sdk = 33
+android.archs = arm64-v8a
 
-# CPU 架构 (arm64-v8a 覆盖主流设备; 加 armeabi-v7a 覆盖旧设备)
-android.arch = arm64-v8a
+# 自动接受 Android SDK 许可证
+android.accept_sdk_license = True
 
 # 启用 AndroidX
 android.enable_androidx = true
