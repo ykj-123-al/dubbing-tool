@@ -7,9 +7,41 @@ Word 文本 → edge-tts 智能配音 | 14 中文音色 | 场景预设 | 试听
 运行: python 配音工具_kivy.py
 """
 
-import os, re, sys, json, hashlib, asyncio, subprocess, threading, time, tempfile
+import os, re, sys, json, hashlib, asyncio, subprocess, threading, time, tempfile, traceback
 from pathlib import Path
 from datetime import datetime
+
+# ── 崩溃日志（写入外部存储，方便排查）──
+CRASH_LOG = None
+try:
+    from kivy.utils import platform as _kivy_platform
+    if _kivy_platform == 'android':
+        CRASH_LOG = Path('/storage/emulated/0/配音工具/crash.log')
+        CRASH_LOG.parent.mkdir(parents=True, exist_ok=True)
+except Exception:
+    pass
+
+def _log_crash(msg):
+    """记录启动日志"""
+    try:
+        if CRASH_LOG:
+            with open(CRASH_LOG, 'a', encoding='utf-8') as f:
+                f.write(f'[{datetime.now().isoformat()}] {msg}\n')
+    except Exception:
+        pass
+
+_log_crash('=== App 启动 ===')
+_log_crash(f'Python: {sys.version}')
+_log_crash(f'Platform: {_kivy_platform if "_kivy_platform" in dir() else "unknown"}')
+
+# ── Android: 设置 asyncio 事件循环策略 ──
+try:
+    if _kivy_platform == 'android':
+        import asyncio
+        asyncio.set_event_loop_policy(asyncio.DefaultEventLoopPolicy())
+        _log_crash('asyncio event loop policy set')
+except Exception as e:
+    _log_crash(f'asyncio setup: {e}')
 
 # ── Kivy / KivyMD (1.x API) ──
 from kivy.config import Config
@@ -17,6 +49,11 @@ Config.set('graphics', 'width', '420')
 Config.set('graphics', 'height', '800')
 Config.set('kivy', 'log_level', 'warning')
 Config.set('kivy', 'keyboard_mode', 'systemandmulti')  # Android 软键盘适配
+Config.set('kivy', 'log_enable', 1)
+# 开启 Kivy 日志文件
+if _kivy_platform == 'android':
+    Config.set('kivy', 'log_dir', '/storage/emulated/0/配音工具')
+    Config.set('kivy', 'log_maxfiles', 5)
 
 from kivy.app import App
 from kivy.core.window import Window
@@ -207,6 +244,22 @@ class VoiceGenerator:
 
 class TtsApp(MDApp):
     def build(self):
+        try:
+            return self._build_safe()
+        except Exception as e:
+            _log_crash('build() crash: ' + type(e).__name__ + ': ' + str(e))
+            _log_crash(traceback.format_exc())
+            from kivy.uix.label import Label as _ErrLbl
+            from kivy.uix.scrollview import ScrollView as _ErrSV
+            sv = _ErrSV()
+            sv.add_widget(_ErrLbl(
+                text='Init Failed\n\n' + type(e).__name__ + '\n' + str(e)[:500] +
+                     '\n\nLog: ' + str(CRASH_LOG),
+                font_size='14sp', halign='left', valign='top',
+                text_size=(380, None), size_hint_y=None, height=1200))
+            return sv
+
+    def _build_safe(self):
         self.theme_cls.primary_palette = 'Pink'
         self.theme_cls.theme_style = 'Light'
         self.title = '🌸 配音工具'
@@ -852,4 +905,26 @@ class TtsApp(MDApp):
 
 # ═══════════════ 入口 ═══════════════
 if __name__ == '__main__':
-    TtsApp().run()
+    try:
+        _log_crash('TtsApp().run() starting')
+        TtsApp().run()
+    except Exception as e:
+        _log_crash('FATAL: ' + type(e).__name__ + ': ' + str(e))
+        _log_crash(traceback.format_exc())
+        try:
+            from kivy.app import App as _CrashApp
+            from kivy.uix.label import Label as _CrashLabel
+            from kivy.uix.scrollview import ScrollView as _CrashScroll
+            class _CrashWrapper(_CrashApp):
+                def build(self):
+                    sv = _CrashScroll()
+                    sv.add_widget(_CrashLabel(
+                        text='App crashed\n\n' + type(e).__name__ + ': ' + str(e) +
+                             '\n\nLog: ' + str(CRASH_LOG),
+                        font_size='14sp', halign='left', valign='top',
+                        text_size=(380, None), size_hint_y=None, height=800))
+                    return sv
+            _CrashWrapper().run()
+        except Exception:
+            pass
+        raise
