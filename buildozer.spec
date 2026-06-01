@@ -1,100 +1,95 @@
 [app]
 
-# ════════════════════════════════════════
-#  配音工具 - Android APK 打包配置
-#  基于 Buildozer + Kivy 2.3.1
-# ════════════════════════════════════════
+# 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
+#  閰嶉煶宸ュ叿 - Android APK 鎵撳寘閰嶇疆
+#  鍩轰簬 Buildozer + Kivy 2.3.1
+# 鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲鈺愨晲
 
-# ── 应用基本信息 ──
-title = 配音工具
+# 鈹���鈹��� 搴旂敤鍩烘湰淇℃伅 鈹���鈹���
+title = 閰嶉煶宸ュ叿
 package.name = dubbingtool
 package.domain = com.tts.dubbing
 source.dir = .
 version = 1.0.0
 
-# ── 入口文件 ──
+# 鈹���鈹��� 鍏ュ彛鏂囦欢 鈹���鈹���
 main.py = main.py
 
-# ── 包含文件类型 ──
+# 鈹���鈹��� 鍖呭惈鏂囦欢绫诲瀷 鈹���鈹���
 source.include_exts = py,png,jpg,jpeg,kv,atlas,wav,mp3,ttf,otf
 
-# ── Python 依赖 (pip 包) ──
+# 鈹���鈹��� Python 渚濊禆 (pip 鍖���) 鈹���鈹���
 requirements = python3,kivy==2.3.1,kivymd==1.2.0,edge-tts==7.2.8,python-docx==1.1.2,requests==2.32.0,Pillow==11.0.0,aiohttp==3.10.0
 
-# ── P4A 配方 (Android 编译依赖) ──
+# 鈹���鈹��� P4A 閰嶆柟 (Android 缂栬瘧渚濊禆) 鈹���鈹���
 # android.recipe.blacklist = openssl,sqlite3
 
-# ── 屏幕方向 ──
+# 鈹���鈹��� 灞忓箷鏂瑰悜 鈹���鈹���
 orientation = portrait
 fullscreen = 0
 
-# ── Android 权限 ──
+# 鈹���鈹��� Android 鏉冮檺 鈹���鈹���
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,READ_MEDIA_AUDIO
 
-# ── Android 功能声明 ──
-android.features = android.hardware.audio.output
+# 鈹���鈹��� Android 鍔熻兘宸茬敱鏉冮檺鑷���鍔ㄦ帹瀵硷紝鏃犻渶棰濆���栧０鏄��� 鈹���鈹���
 
-# ── Meta 数据 ──
-android.meta_data = \
-    com.google.android.play.core.assetpacks.versionCode=1
-
-# ── 构建设置 ──
-# Android API 级别 (target=33, min=26 覆盖 95% 设备)
+# 鈹���鈹��� 鏋勫缓璁剧疆 鈹���鈹���
+# Android API 绾у埆 (target=33, min=26 瑕嗙洊 95% 璁惧������)
 android.api = 33
 android.minapi = 26
 
-# NDK 版本
+# NDK 鐗堟湰
 android.ndk = 25b
 
-# SDK 版本
+# SDK 鐗堟湰
 android.archs = arm64-v8a
 
-# 自动接受 Android SDK 许可证
+# 鑷���鍔ㄦ帴鍙��� Android SDK 璁稿彲璇���
 android.accept_sdk_license = True
 
-# 启用 AndroidX
+# 鍚���鐢��� AndroidX
 android.enable_androidx = true
 
-# Java 编译选项
+# Java 缂栬瘧閫夐」
 android.gradle_dependencies = androidx.core:core:1.9.0
 
-# ── 签名 ──
-# 发布时取消注释并填入密钥信息
+# 鈹���鈹��� 绛惧悕 鈹���鈹���
+# 鍙戝竷鏃跺彇娑堟敞閲婂苟濉���鍏ュ瘑閽ヤ俊鎭���
 # android.release = 1
 # android.keystore = release.keystore
 # android.keyalias = dubbingtool
 # android.keystore_password = your_password
 # android.keyalias_password = your_password
 
-# ── 图标与启动画面 ──
-# 将 icon.png (512x512) 放在项目根目录
+# 鈹���鈹��� 鍥炬爣涓庡惎鍔ㄧ敾闈��� 鈹���鈹���
+# 灏��� icon.png (512x512) 鏀惧湪椤圭洰鏍圭洰褰���
 # icon.filename = icon.png
 
-# 启动画面
+# 鍚���鍔ㄧ敾闈���
 # presplash.filename = splash.png
 # presplash.color = FAE5E5
 
-# ── 日志过滤 ──
+# 鈹���鈹��� 鏃ュ織杩囨护 鈹���鈹���
 android.logcat_filters = *:S python:D
 
-# ── 额外源码目录 ──
+# 鈹���鈹��� 棰濆���栨簮鐮佺洰褰��� 鈹���鈹���
 android.add_src =
 
-# ── 编译优化 ──
+# 鈹���鈹��� 缂栬瘧浼樺寲 鈹���鈹���
 android.allow_backup = true
 
 [buildozer]
 
-# ── 构建工具设置 ──
+# 鈹���鈹��� 鏋勫缓宸ュ叿璁剧疆 鈹���鈹���
 
-# 日志级别: 0=静默, 1=基本信息, 2=详细
+# 鏃ュ織绾у埆: 0=闈欓粯, 1=鍩烘湰淇℃伅, 2=璇︾粏
 log_level = 2
 
-# 警告 root 用户
+# 璀﹀憡 root 鐢ㄦ埛
 warn_on_root = 1
 
-# 超时设置 (秒)
+# 瓒呮椂璁剧疆 (绉���)
 build_timeout = 3600
 
-# 构建目录
+# 鏋勫缓鐩���褰���
 build_dir = .buildozer
